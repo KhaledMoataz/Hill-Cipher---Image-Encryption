@@ -30,6 +30,17 @@ A2 = np.concatenate((c,d), axis = 1)
 A = np.concatenate((A1,A2), axis = 0)
 Test = np.mod(np.matmul(np.mod(A,Mod),np.mod(A,Mod)),Mod)       #making sure that A is an involutory matrix, A*A = I
 
+# Saving key as an image
+key = np.zeros((n + 1, n))
+key[:n, :n] += A
+# Adding the dimension of the original image within the key
+# Elements of the matrix should be below 256
+key[-1][0] = int(l / Mod)
+key[-1][1] = l % Mod
+key[-1][2] = int(w / Mod)
+key[-1][3] = w % Mod
+imageio.imwrite("Key.png", key)
+
 #-------------Encrypting-------------
 Enc1 = (np.matmul(A % Mod,img2[:,:,0] % Mod)) % Mod
 Enc2 = (np.matmul(A % Mod,img2[:,:,1] % Mod)) % Mod
@@ -42,9 +53,13 @@ Enc = np.concatenate((Enc1,Enc2,Enc3), axis = 2)                #Enc = A * image
 
 imageio.imwrite('Encrypted.png',Enc)
 
-Enc = imageio.imread('Encrypted.png')                           #Reading Encrypted Image to Decrypt
-
 #-------------Decrypting-------------
+Enc = imageio.imread('Encrypted.png')                           #Reading Encrypted Image to Decrypt
+# Loading the key
+A = imageio.imread('Key.png')
+l = A[-1][0] * Mod + A[-1][1] # The length of the original image 
+w = A[-1][2] * Mod + A[-1][3] # The width of the original image
+A = key[0:-1]
 
 Dec1 = (np.matmul(A % Mod,Enc[:,:,0] % Mod)) % Mod
 Dec2 = (np.matmul(A % Mod,Enc[:,:,1] % Mod)) % Mod
