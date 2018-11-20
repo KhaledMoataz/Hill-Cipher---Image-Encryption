@@ -59,7 +59,7 @@ Enc = imageio.imread('Encrypted.png')                           #Reading Encrypt
 A = imageio.imread('Key.png')
 l = A[-1][0] * Mod + A[-1][1] # The length of the original image 
 w = A[-1][2] * Mod + A[-1][3] # The width of the original image
-A = key[0:-1]
+A = A[0:-1]
 
 Dec1 = (np.matmul(A % Mod,Enc[:,:,0] % Mod)) % Mod
 Dec2 = (np.matmul(A % Mod,Enc[:,:,1] % Mod)) % Mod
