@@ -6,7 +6,7 @@ img = imageio.imread('0.png')
 
 nl = l = img.shape[0]
 w = img.shape[1]
-n = 4
+n = 10
 if l%n:
     nl = (int((l - 1) / n) + 1) * n
 img2 = np.zeros((nl,w,3))
@@ -57,16 +57,16 @@ imageio.imwrite('Encrypted.png',Encrypted)
 
 #-------------Decrypting-------------
 Enc = imageio.imread('Encrypted.png')                           #Reading Encrypted Image to Decrypt
-nl = Enc.shape[0]
+nl = int(Enc.shape[0])
 # Loading the key
 #A = imageio.imread('Key.png')
 A = key
-n = A.shape[0] - 1
-l = A[-1][0] * Mod + A[-1][1] # The length of the original image 
-w = A[-1][2] * Mod + A[-1][3] # The width of the original image
+n = int(A.shape[0] - 1)
+l = int(A[-1][0] * Mod + A[-1][1]) # The length of the original image 
+w = int(A[-1][2] * Mod + A[-1][3]) # The width of the original image
 A = A[0:-1]
 
-Decrypted = np.zeros((int(nl),int(w),3))
+Decrypted = np.zeros((nl,w,3))
 for i in range(int(nl/n)):
     Dec1 = (np.matmul(A % Mod,Enc[i * n:(i + 1) * n,:,0] % Mod)) % Mod
     Dec2 = (np.matmul(A % Mod,Enc[i * n:(i + 1) * n,:,1] % Mod)) % Mod
@@ -77,8 +77,8 @@ for i in range(int(nl/n)):
     Dec3 = np.resize(Dec3,(Dec3.shape[0],Dec3.shape[1],1))
     Decrypted[i * n:(i + 1) * n,:] += np.concatenate((Dec1,Dec2,Dec3), axis = 2)                #Dec = A * Enc
 
-#Final = Dec[:l,:w,:]                                            #Returning Dimensions to the real image
+Final = Decrypted[:l,:w,:]                                            #Returning Dimensions to the real image
 
-imageio.imwrite('Decrypted.png',Decrypted)
+imageio.imwrite('Decrypted.png',Final)
 
 print("HEXAGEEKS")
