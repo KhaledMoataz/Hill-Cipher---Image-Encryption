@@ -1,16 +1,32 @@
 import imageio
 import numpy as np
 
+ourFeature = 1
+
 #---------------Read Image to Encrypt---------------
 img = imageio.imread('0.png')
 
 nl = l = img.shape[0]
 w = img.shape[1]
-n = 10
+n = 4
 if l%n:
     nl = (int((l - 1) / n) + 1) * n
 img2 = np.zeros((nl,w,3))
-img2[:l,:w,:] += img                                            #Making the picture to have square dimensions
+img2[:l,:w,:] += img
+
+def f(x, y):
+    return x * x + y * y + 10 * x + 10 * y
+
+if (ourFeature):
+    img3 = np.zeros((nl,w,3))
+    for x in range(nl):
+        for y in range(w):
+            v = f(x, y)
+            img3[x, y, 0] = v
+            img3[x, y, 1] = v
+            img3[x, y, 2] = v
+    img2 = (img2 + img3) % 256
+    imageio.imwrite('Step.png', img2)
 
 #-------------Generating Encryption Key-------------
 Mod = 256
@@ -77,8 +93,11 @@ for i in range(int(nl/n)):
     Dec3 = np.resize(Dec3,(Dec3.shape[0],Dec3.shape[1],1))
     Decrypted[i * n:(i + 1) * n,:] += np.concatenate((Dec1,Dec2,Dec3), axis = 2)                #Dec = A * Enc
 
-Final = Decrypted[:l,:w,:]                                            #Returning Dimensions to the real image
+if (ourFeature):
+    Decrypted = (Decrypted - img3) % 256
 
-imageio.imwrite('Decrypted.png',Final)
+Decrypted = Decrypted[:l,:w,:]                                            #Returning Dimensions to the real image
+
+imageio.imwrite('Decrypted.png', Decrypted)
 
 print("HEXAGEEKS")
